@@ -48,7 +48,7 @@ public class CategoryServiceImpl implements ICategoryService{
 	
 	
 	/**
-	 * implements service get Categories By Id
+	 * implements service GET Categories By Id
 	 */
 	
 	@Override
@@ -81,7 +81,7 @@ public class CategoryServiceImpl implements ICategoryService{
 	}
 	
 	/**
-	 * implements service for save categories
+	 * implements service for SAVE categories
 	 */
 	
 	@Override
@@ -111,6 +111,73 @@ public class CategoryServiceImpl implements ICategoryService{
 		}
 		
 		return new ResponseEntity<CategoryResponseRest>(response, HttpStatus.OK);
-		
 	}
+	
+	
+	
+	/**
+	 * UPDATE categories
+	 */
+	
+	@Override
+	@Transactional
+	public ResponseEntity<CategoryResponseRest> update(Category category, Long id) {
+		
+    CategoryResponseRest response = new CategoryResponseRest();
+    List<Category> list = new ArrayList<>();
+		
+		try {		
+			Optional<Category> categorySearch = categoryDao.findById(id);
+			
+			if(categorySearch.isPresent()) {
+				categorySearch.get().setName(category.getName());
+				categorySearch.get().setDescription(category.getDescription());
+				
+				Category categoryToUpdate = categoryDao.save(categorySearch.get());
+				
+				if(categoryToUpdate != null) {
+					list.add(categoryToUpdate);
+					response.getCategoryResponse().setCategory(list);
+					response.setMetadata("Respuesta OK", "00", "Categoria Actualizada");
+				}
+			}
+			else {
+				response.setMetadata("Error al Actualizar", "00", "Categoria No encontrada");
+				return new ResponseEntity<CategoryResponseRest>(response, HttpStatus.NOT_FOUND);
+			}
+		}
+		catch(Exception e) {
+			 response.setMetadata("Error", "-1", "Error al consultar");
+			 e.getStackTrace();
+			 return new ResponseEntity<CategoryResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<CategoryResponseRest>(response, HttpStatus.OK);
+	}
+
+
+
+	@Override
+	@Transactional
+	public ResponseEntity<CategoryResponseRest> deleteById(Long id) {
+	
+		 CategoryResponseRest response = new CategoryResponseRest();
+		   				
+				try {		
+					categoryDao.deleteById(id);
+					response.setMetadata("Respuesta OK", "00", "Registro Eliminado");
+				}
+				catch(Exception e) {
+					 response.setMetadata("Error", "-1", "Error al consultar");
+					 e.getStackTrace();
+					 return new ResponseEntity<CategoryResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				
+				return new ResponseEntity<CategoryResponseRest>(response, HttpStatus.OK);
+			}
+	
+	
+	
 }
+	
+
