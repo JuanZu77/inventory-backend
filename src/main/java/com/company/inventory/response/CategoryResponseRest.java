@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class CategoryResponseRest extends ResponseRest{
 	
-	//Instanciamos CategoryResponse de ResponseRest
+	//ICategoryResponse instance of ResponseRest
 	private CategoryResponse categoryResponse = new CategoryResponse();
 	
 
